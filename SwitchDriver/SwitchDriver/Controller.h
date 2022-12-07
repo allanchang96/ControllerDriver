@@ -1,0 +1,41 @@
+EXTERN_C_START
+
+typedef struct _CONTROLLER_CONTEXT
+{
+	BOOLEAN bA;
+	BOOLEAN bB;
+	BOOLEAN bX;
+	BOOLEAN bY;
+	BOOLEAN bDpadUp;
+	BOOLEAN bDpadDown;
+	BOOLEAN bDpadLeft;
+	BOOLEAN bDpadRight;
+	BOOLEAN bL;
+	BOOLEAN bR;
+	BOOLEAN bZL;
+	BOOLEAN bZR;
+	BOOLEAN bLeftThumb;
+	BOOLEAN bRightThumb;
+	BOOLEAN bMinus;
+	BOOLEAN bPlus;
+	BOOLEAN bCapture;
+	BOOLEAN bHome;
+	SHORT sThumbLX;
+	SHORT sThumbLY;
+	SHORT sThumbRX;
+	SHORT sThumbRY;
+
+} CONTROLLER_CONTEXT, * PCONTROLLER_CONTEXT;
+
+WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(CONTROLLER_CONTEXT, ControllerGetContext)
+
+NTSTATUS Controller_Init(
+	_In_ WDFDEVICE Device
+);
+
+VOID Controller_Parse(
+	_In_ WDFDEVICE Device,
+	_In_ PUCHAR Input
+);
+
+EXTERN_C_END

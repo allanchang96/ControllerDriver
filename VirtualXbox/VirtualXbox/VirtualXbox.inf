@@ -1,0 +1,77 @@
+;
+; VirtualXbox.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System ; TODO: specify appropriate Class
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=VirtualXbox.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+VirtualXbox_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+VirtualXbox.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%VirtualXbox.DeviceDesc%=VirtualXbox_Device, Root\VirtualXbox ; TODO: edit hw-id
+
+[VirtualXbox_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+VirtualXbox.sys
+
+;-------------- Service installation
+[VirtualXbox_Device.NT.Services]
+AddService = VirtualXbox,%SPSVCINST_ASSOCSERVICE%, VirtualXbox_Service_Inst
+
+; -------------- VirtualXbox driver install sections
+[VirtualXbox_Service_Inst]
+DisplayName    = %VirtualXbox.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\VirtualXbox.sys
+
+;
+;--- VirtualXbox_Device Coinstaller installation ------
+;
+
+[VirtualXbox_Device.NT.CoInstallers]
+AddReg=VirtualXbox_Device_CoInstaller_AddReg
+CopyFiles=VirtualXbox_Device_CoInstaller_CopyFiles
+
+[VirtualXbox_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[VirtualXbox_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[VirtualXbox_Device.NT.Wdf]
+KmdfService =  VirtualXbox, VirtualXbox_wdfsect
+[VirtualXbox_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "VirtualXbox Installation Disk"
+VirtualXbox.DeviceDesc = "VirtualXbox Device"
+VirtualXbox.SVCDESC = "VirtualXbox Service"
